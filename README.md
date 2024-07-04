@@ -1,3 +1,34 @@
+# Example
+```rust
+use dotenvy::dotenv;
+use std::env;
+
+use vndb_api::client::VndbApiClient;
+use vndb_api::request::query::{QueryBuilder, VnQuery, VnField, VnFieldChoices, SortField};
+
+#[tokio::main]
+async fn main() {
+    dotenv().ok();
+    let api_key = env::var("API_KEY").expect("API_KEY must be set");
+    let api_client = VndbApiClient::new(&String::from(api_key));
+
+    let query = QueryBuilder::<VnQuery>::new()
+        .filters(vec!["search".to_string(), "=".to_string(), "Saya no Uta".to_string()])
+        .fields(VnFieldChoices::all())
+        .sort(SortField::Rating)
+        .results(3)
+        .page(1)
+        .reverse()
+        .enable_count()
+        .enable_compact_filters()
+        .enable_normalized_filters()
+        .build();
+    if let Ok(response) = api_client.vn_search(&query).await {
+        println!("{:#?}", response);
+    }
+}
+```
+
 # VNDB
 
 This crate allows for data collection from the [VNDB site](https://vndb.org). VNDB (Visual Novel Database)
