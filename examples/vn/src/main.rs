@@ -59,6 +59,38 @@ async fn main() {
     if let Ok(response) = api_client.vn_search(&query).await {
         println!("{:#?}", response);
     }
+    
+    // gets autocomplete options
+    let query = QueryBuilder::<VnQuery>::new()
+        .filters(vec!["search".to_string(), "=".to_string(), "DDLC".to_string()])
+        .fields(VnFieldChoices::from(vec![VnField::Title]))
+        .results(3)
+        .page(1)
+        .build();
+    if let Ok(response) = api_client.vn_search(&query).await {
+        response.results.iter()
+            .filter(|vn| vn.title.is_some())
+            .for_each(|vn| {
+                println!("{}", vn.title.as_ref().unwrap());
+            });
+    }
+
+    // prints the name and rating for the top 3 visual novels on the site
+    let query = QueryBuilder::<VnQuery>::new()
+        .fields(VnFieldChoices::from(vec![VnField::Id, VnField::Title, VnField::Rating]))
+        .sort(SortField::Rating)
+        .results(3)
+        .page(1)
+        .reverse()
+        .build();
+    if let Ok(response) = api_client.vn_search(&query).await {
+        response.results.iter()
+            .filter(|vn| vn.title.is_some() && vn.rating.is_some())
+            .for_each(|vn| {
+                println!("{}: {}", vn.title.as_ref().unwrap(), vn.rating.unwrap());
+            });
+    }
+
 }
 
 
