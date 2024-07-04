@@ -6,7 +6,7 @@ authors = ["demeil1 https://github.com/demeil1"]
 license = "MIT"
 repository = "https://github.com/demeil1/vndb-api"
 description = "VisualNovelDatabase (VNDB) API Wrapper"
-keywords = ["vndb", "visualnovel", "anime", "manga", "api", "visual", "novel", "vn", "https"]
+keywords = ["vndb", "visualnovel", "api", "vn", "https"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
