@@ -37,7 +37,7 @@ stores a plethora of information about Visual Novels, Characters, Producers, Tag
 # Documentation
 
 The entirety of this crate is based on the new [HTTPS-based API Documentation](https://api.vndb.org/kana#post-character) and aims to simplify the way you collect data from the site. Further documentation 
-and use cases for this crate can be found in the "examples" directory or in the respective modules of
+and use cases for this crate can be found in the ["examples" directory on github](https://github.com/demeil1/vndb-api/tree/main/examples) or in the respective modules of
 the parts of the crate you use.
 
 # Requirments
@@ -46,7 +46,7 @@ This crate only requires a VNDB API key to use. To get an API key follow the ins
 Obtaining an API Key:
 1. Register for a VNDB account (or Login if you already have one)
 2. Open the "My Profile" tab and navigate to the "Applications" section
-3. Create a new token and use as instructed (see "examples" directory)
+3. Create a new token and use as instructed (see ["examples" directory](https://github.com/demeil1/vndb-api/tree/main/examples))
 
 # Current Limitations of This Crate
 
