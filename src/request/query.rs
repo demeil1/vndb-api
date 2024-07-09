@@ -904,7 +904,6 @@ impl QueryBuilder<TraitQuery> {
         self
     }
 
-
     pub fn sort(mut self, sort_field: SortField) -> Self {
         match sort_field {
             SortField::Id | SortField::Name | SortField::CharCount | SortField::Searchrank => {

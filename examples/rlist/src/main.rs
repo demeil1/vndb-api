@@ -22,10 +22,10 @@ async fn main() {
     // requires the listwrite permission. 
     // all visual novels linked to the release are also added 
     // to the user’s visual novel list if they aren’t in the list yet.
-    let patch = RListPatch::new().status(UListStatus::Obtained);
-    if let Ok(_) = api_client.rlist_patch(&String::from("r12"), &patch).await {
-        println!("Successfully patched release list!");
-    }
+    // let patch = RListPatch::new().status(UListStatus::Obtained);
+    // if let Ok(_) = api_client.rlist_patch(&String::from("r12"), &patch).await {
+    //     println!("Successfully patched release list!");
+    // }
 
     // 2. remove a release from the user’s list. 
     // returns success even if the release is not on the user’s list. 

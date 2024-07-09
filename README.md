@@ -12,19 +12,45 @@ async fn main() {
     let api_key = env::var("API_KEY").expect("API_KEY must be set");
     let api_client = VndbApiClient::new(&String::from(api_key));
 
+    // For more examples see the ["examples" directory](https://github.com/demeil1/vndb-api/tree/main/examples) in the github repo
+
+    // search for visual novel by name with autocomplete options
     let query = QueryBuilder::<VnQuery>::new()
-        .filters(vec!["search".to_string(), "=".to_string(), "Saya no Uta".to_string()])
-        .fields(VnFieldChoices::all())
+        .filters(vec!["search".to_string(), "=".to_string(), "DDLC".to_string()])
+        .fields(VnFieldChoices::from(vec![VnField::Title]))
+        .results(3)
+        .page(1)
+        .build();
+    match api_client.vn_search(&query).await {
+        Ok(response) => {
+            response.results.iter()
+            .filter(|vn| vn.title.is_some())
+            .for_each(|vn| {
+                println!("{}", vn.title.as_ref().unwrap());
+            });
+        }
+        Err(error) => {
+            eprintln!("{:#?}", error);
+        }
+    }
+
+    // prints the name and rating for the top 3 visual novels on the site
+    let query = QueryBuilder::<VnQuery>::new()
+        .fields(VnFieldChoices::from(vec![VnField::Id, VnField::Title, VnField::Rating]))
         .sort(SortField::Rating)
         .results(3)
         .page(1)
         .reverse()
-        .enable_count()
-        .enable_compact_filters()
-        .enable_normalized_filters()
         .build();
-    if let Ok(response) = api_client.vn_search(&query).await {
-        println!("{:#?}", response);
+    match api_client.vn_search(&query).await {
+        Ok(response) => {
+            response.results.iter()
+            .filter(|vn| vn.title.is_some() && vn.rating.is_some())
+            .for_each(|vn| {
+                println!("{}: {}", vn.title.as_ref().unwrap(), vn.rating.unwrap());
+            });
+        }
+        Err(error) => eprintln!("{:#?}", error),
     }
 }
 ```

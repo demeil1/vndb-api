@@ -1,5 +1,6 @@
 pub mod auth;
 pub mod character;
+pub mod error;
 pub mod producer;
 pub mod release;
 pub mod rlist;

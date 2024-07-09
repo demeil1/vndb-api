@@ -36,8 +36,9 @@ async fn main() {
         .enable_compact_filters()
         .enable_normalized_filters()
         .build();
-    if let Ok(response) = api_client.ulist(&query).await {
-        println!("{:#?}", response);
+    match api_client.ulist(&query).await {
+        Ok(response) => println!("{:#?}", response),
+        Err(error) => eprintln!("{:#?}", error),
     }
 
     // 2. fetch the list labels for a certain user by id
@@ -50,11 +51,11 @@ async fn main() {
         // rating for the visual novel from 10 - 100 automatically adjust if out of bounds
         .vote(97)
         // leave a notes for that specific visual novel
-        .notes(String::from("This is my favorite"))
+        .notes(String::from("This is my favorite visual novel"))
         // start date
         .started(Date{ year: 2024, month: 7, day: 3 })
         // finish date
-        .started(Date{ year: 2024, month: 7, day: 4 })
+        .finished(Date{ year: 2024, month: 7, day: 4 })
         // setting this will overwrite any existing labels assigned to the VN with the given array
         .labels(vec![LabelId::Finished])
         // array of label ids to add to the VN any already existing labels will be unaffected

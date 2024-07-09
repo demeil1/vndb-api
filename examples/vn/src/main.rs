@@ -60,19 +60,24 @@ async fn main() {
         println!("{:#?}", response);
     }
     
-    // gets autocomplete options
+    // search for visual novel by name with autocomplete options
     let query = QueryBuilder::<VnQuery>::new()
         .filters(vec!["search".to_string(), "=".to_string(), "DDLC".to_string()])
         .fields(VnFieldChoices::from(vec![VnField::Title]))
         .results(3)
         .page(1)
         .build();
-    if let Ok(response) = api_client.vn_search(&query).await {
-        response.results.iter()
+    match api_client.vn_search(&query).await {
+        Ok(response) => {
+            response.results.iter()
             .filter(|vn| vn.title.is_some())
             .for_each(|vn| {
                 println!("{}", vn.title.as_ref().unwrap());
             });
+        }
+        Err(error) => {
+            eprintln!("{:#?}", error);
+        }
     }
 
     // prints the name and rating for the top 3 visual novels on the site
@@ -83,14 +88,39 @@ async fn main() {
         .page(1)
         .reverse()
         .build();
-    if let Ok(response) = api_client.vn_search(&query).await {
-        response.results.iter()
+    match api_client.vn_search(&query).await {
+        Ok(response) => {
+            response.results.iter()
             .filter(|vn| vn.title.is_some() && vn.rating.is_some())
             .for_each(|vn| {
                 println!("{}: {}", vn.title.as_ref().unwrap(), vn.rating.unwrap());
             });
+        }
+        Err(error) => eprintln!("{:#?}", error),
     }
 
+    // error handling: example response when there is an error in the query
+    // here the filter "search" is misspelled as "serch"
+    // a helpful message is provided as well as a status code (status code documentation):
+    //      https://api.vndb.org/kana#delete-rlistid
+    let query = QueryBuilder::<VnQuery>::new()
+        .filters(vec!["serch".to_string(), "=".to_string(), "DDLC".to_string()])
+        .fields(VnFieldChoices::from(vec![VnField::Title]))
+        .results(3)
+        .page(1)
+        .build();
+    match api_client.vn_search(&query).await {
+        Ok(response) => {
+            response.results.iter()
+            .filter(|vn| vn.title.is_some())
+            .for_each(|vn| {
+                println!("{}", vn.title.as_ref().unwrap());
+            });
+        }
+        Err(error) => {
+            eprintln!("{:#?}", error);
+        }
+    }
 }
 
 
