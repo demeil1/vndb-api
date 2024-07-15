@@ -11,7 +11,9 @@ async fn main() {
     let api_key = env::var("API_KEY").expect("API_KEY must be set");
     let api_client = VndbApiClient::new(&String::from(api_key));
 
-    // Aadd to or remove from a release list by id
+    // Add to or remove from a release list by id
+    // If a release id is unknown, you can use a release query
+    //      to find the id (see examples/release/main.rs).
     // For information on the struct fields see src/format/rlist.rs
     //      or see the documentation on user lists here:
     //      1. https://api.vndb.org/kana#patch-rlistid
@@ -22,10 +24,10 @@ async fn main() {
     // requires the listwrite permission. 
     // all visual novels linked to the release are also added 
     // to the user’s visual novel list if they aren’t in the list yet.
-    // let patch = RListPatch::new().status(UListStatus::Obtained);
-    // if let Ok(_) = api_client.rlist_patch(&String::from("r12"), &patch).await {
-    //     println!("Successfully patched release list!");
-    // }
+    let patch = RListPatch::new().status(UListStatus::Obtained);
+    if let Ok(_) = api_client.rlist_patch(&String::from("r12"), &patch).await {
+        println!("Successfully patched release list!");
+    }
 
     // 2. remove a release from the user’s list. 
     // returns success even if the release is not on the user’s list. 

@@ -12,6 +12,8 @@ async fn main() {
     let api_client = VndbApiClient::new(&String::from(api_key));
 
     // Fetch, add to, or remove from a user list by id
+    // If you don't know a user's id, you can use a user search
+    //      to find the id (see examples/user/main.rs).
     // For information on the struct fields see src/format/ulist.rs
     //      or see the documentation on user lists here:
     //      1. https://api.vndb.org/kana#post-ulist
@@ -64,6 +66,7 @@ async fn main() {
         .labels_unset(vec![LabelId::BlackList])
         // build the patcher
         .build();
+    // If you don't know a visual novel id you can search for it (see examples/vn/main.rs)
     if let Ok(_) = api_client.ulist_patch(&String::from("v101"), &patch).await {
         println!("Success: added v101");
     }
