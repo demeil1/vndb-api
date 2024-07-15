@@ -17,7 +17,7 @@ async fn main() {
     // search for visual novel by name with autocomplete options
     let query = QueryBuilder::<VnQuery>::new()
         .filters(vec!["search".to_string(), "=".to_string(), "DDLC".to_string()])
-        .fields(VnFieldChoices::from(vec![VnField::Title]))
+        .fields(VnFieldChoices::all()))
         .results(3)
         .page(1)
         .build();
@@ -35,7 +35,7 @@ async fn main() {
 
     // prints the name and rating for the top 3 visual novels on the site
     let query = QueryBuilder::<VnQuery>::new()
-        .fields(VnFieldChoices::from(vec![VnField::Id, VnField::Title, VnField::Rating]))
+        .fields(VnFieldChoices::all()))
         .sort(SortField::Rating)
         .results(3)
         .page(1)
