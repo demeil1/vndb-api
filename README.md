@@ -24,10 +24,9 @@ async fn main() {
     match api_client.vn_search(&query).await {
         Ok(response) => {
             response.results.iter()
-            .filter(|vn| vn.title.is_some())
-            .for_each(|vn| {
-                println!("{}", vn.title.as_ref().unwrap());
-            });
+                .for_each(|vn| {
+                    println!("{}", vn.title.as_ref().unwrap());
+                });
         }
         Err(error) => {
             eprintln!("{:#?}", error);
@@ -45,10 +44,9 @@ async fn main() {
     match api_client.vn_search(&query).await {
         Ok(response) => {
             response.results.iter()
-            .filter(|vn| vn.title.is_some() && vn.rating.is_some())
-            .for_each(|vn| {
-                println!("{}: {}", vn.title.as_ref().unwrap(), vn.rating.unwrap());
-            });
+                .for_each(|vn| {
+                    println!("{}: {}", vn.title.as_ref().unwrap(), vn.rating.unwrap());
+                });
         }
         Err(error) => eprintln!("{:#?}", error),
     }
