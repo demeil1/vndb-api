@@ -95,7 +95,7 @@ Obtaining an API Key:
 2. Open the "My Profile" tab and navigate to the "Applications" section
 3. Create a new token and use as instructed (see ["examples" directory](https://github.com/demeil1/vndb-api/tree/main/examples))
 
-# Reqursive Queries
+# Recursive Queries
 
 **Fields**: This section allows you to select the pieces of information you want to pull from the site about a
 particular subject (Visual Novels, Producers, etc.). Unfortunately, due to the recursive nature of the [Visual Novel](https://api.vndb.org/kana#post-vn), [Release](https://api.vndb.org/kana#post-release), and [Character](https://api.vndb.org/kana#post-character) queries, recursive field choices have been limited. And, while the structs in this crate **DO** allow for said recursive field queries, recursive selection of fields is quite impractical and causes VNDB to deny providing a response due to the large size. These limitations only apply to the Visual Novel, Release, and Character queries. You **ARE** still be able to fill all struct fields with the aforementioned queries. Recursive sections (such as related Visual Novels in a Visual Novel query) in the structure **WILL** still have their name and id such that they can be searched later on for extra information.
