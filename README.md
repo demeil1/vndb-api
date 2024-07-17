@@ -18,10 +18,9 @@ async fn main() {
 
     // search for visual novel by name with autocomplete options
     let query = QueryBuilder::<VnQuery>::new()
-        .filters(vec!["search".to_string(), "=".to_string(), "DDLC".to_string()])
-        .fields(VnFieldChoices::all()))
+        .filters(&r#"["search", "=", "DDLC"]"#.to_string())
+        .fields(VnFieldChoices::from(vec![VnField::Title]))
         .results(3)
-        .page(1)
         .build();
     match api_client.vn_search(&query).await {
         Ok(response) => {
