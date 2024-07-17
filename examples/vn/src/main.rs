@@ -22,7 +22,7 @@ async fn main() {
         // this field can be blank in the form of an empty vector
         // currently this code filters by name to find a specific visual novel
         // more ways to filter can be found in the official documentation
-        .filters(vec!["search".to_string(), "=".to_string(), "Saya no Uta".to_string()])
+        .filters(&r#"["search", "=", "Saya no Uta"]"#.to_string())
         // allows for selection of desired data fields can be done by hand using
         // VnFieldChoices::from() by passing in a vector of the VnField type
         // which can be found in src/request/query.rs
@@ -62,10 +62,10 @@ async fn main() {
     
     // search for visual novel by name with autocomplete options
     let query = QueryBuilder::<VnQuery>::new()
-        .filters(vec!["search".to_string(), "=".to_string(), "DDLC".to_string()])
+        .filters(&r#"["search", "=", "DDLC"]"#.to_string())
+        // how to limit field choices instead of using ___FieldChoices::all()
         .fields(VnFieldChoices::from(vec![VnField::Title]))
         .results(3)
-        .page(1)
         .build();
     match api_client.vn_search(&query).await {
         Ok(response) => {
@@ -81,7 +81,7 @@ async fn main() {
 
     // prints the name and rating for the top 3 visual novels on the site
     let query = QueryBuilder::<VnQuery>::new()
-        .fields(VnFieldChoices::from(vec![VnField::Id, VnField::Title, VnField::Rating]))
+        .fields(VnFieldChoices::from(vec![VnField::Title, VnField::Rating]))
         .sort(SortField::Rating)
         .results(3)
         .page(1)
@@ -102,10 +102,8 @@ async fn main() {
     // a helpful message is provided as well as a status code (status code documentation):
     //      https://api.vndb.org/kana#delete-rlistid
     let query = QueryBuilder::<VnQuery>::new()
-        .filters(vec!["serch".to_string(), "=".to_string(), "DDLC".to_string()])
+        .filters(&r#"["serch", "=", "v101"]"#.to_string())
         .fields(VnFieldChoices::from(vec![VnField::Title]))
-        .results(3)
-        .page(1)
         .build();
     match api_client.vn_search(&query).await {
         Ok(response) => {
@@ -118,6 +116,27 @@ async fn main() {
             eprintln!("{:#?}", error);
         }
     }
+
+    // using complex filters, another examples is listed in the vndb documentation
+    //      https://api.vndb.org/kana#filters
+    let filters = r#"
+        [ "and"
+            , [ "or"
+                , [ "olang", "!=", "en" ]
+                , [ "olang", "!=", "ja" ]
+            ]
+            , [ "released", ">=", "2020-01-01" ]
+        ]
+    "#.to_string();
+    let query = QueryBuilder::<VnQuery>::new()
+        .filters(&filters)
+        .results(10)
+        .page(1)
+        .build();
+    match api_client.vn_search(&query).await {
+        Ok(response) => {
+            println!("{:#?}", response);
+        }
+        Err(error) => { eprintln!("{:#?}", error); }
+    }
 }
-
-

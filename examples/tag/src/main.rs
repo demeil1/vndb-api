@@ -17,13 +17,21 @@ async fn main() {
     // Tag queries are similar to visual novel queries 
     // see examples/vn/main.rs for detailed documentation
     let query = QueryBuilder::<TagQuery>::new()
-        .filters(vec!["id".to_string(), "=".to_string(), "g2".to_string()])
+        .filters(&r#"["id", "=", "g2"]"#.to_string())
         .fields(TagFieldChoices::all())
-        .sort(SortField::Id)
+        .enable_compact_filters()
+        .enable_normalized_filters()
+        .build();
+    if let Ok(response) = api_client.tag_search(&query).await {
+        println!("{:#?}", response);
+    }
+    
+    // this does the same as the query above except it searches by tag 
+    // name instead of id, the "fantasy" = trait id "g2" in the above query
+    let query = QueryBuilder::<TagQuery>::new()
+        .filters(&r#"["search", "=", "fantasy"]"#.to_string())
+        .fields(TagFieldChoices::all())
         .results(3)
-        .page(1)
-        .reverse()
-        .enable_count()
         .enable_compact_filters()
         .enable_normalized_filters()
         .build();

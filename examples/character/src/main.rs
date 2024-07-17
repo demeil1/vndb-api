@@ -17,13 +17,19 @@ async fn main() {
     // Character queries are similar to visual novel queries 
     // see examples/vn/main.rs for detailed documentation
     let query = QueryBuilder::<CharacterQuery>::new()
-        .filters(vec!["id".to_string(), "=".to_string(), "c1".to_string()])
+        .filters(&r#"["id", "=", "c1"]"#.to_string())
         .fields(CharacterFieldChoices::all())
-        .sort(SortField::Id)
-        .results(3)
-        .page(1)
-        .reverse()
-        .enable_count()
+        .enable_compact_filters()
+        .enable_normalized_filters()
+        .build();
+    if let Ok(response) = api_client.character_search(&query).await {
+        println!("{:#?}", response);
+    }
+    
+    // searching for a character by name 
+    let query = QueryBuilder::<CharacterQuery>::new()
+        .filters(&r#"["search", "=", "rance"]"#.to_string())
+        .fields(CharacterFieldChoices::all())
         .enable_compact_filters()
         .enable_normalized_filters()
         .build();

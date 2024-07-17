@@ -17,13 +17,20 @@ async fn main() {
     // Staff queries are similar to visual novel queries 
     // see examples/vn/main.rs for detailed documentation
     let query = QueryBuilder::<StaffQuery>::new()
-        .filters(vec!["id".to_string(), "=".to_string(), "s1".to_string()])
+        .filters(&r#"["id", "=", "s1"]"#.to_string())
         .fields(StaffFieldChoices::all())
-        .sort(SortField::Id)
-        .results(3)
-        .page(1)
-        .reverse()
-        .enable_count()
+        .enable_compact_filters()
+        .enable_normalized_filters()
+        .build();
+    if let Ok(response) = api_client.staff_search(&query).await {
+        println!("{:#?}", response);
+    }
+
+
+    // searching for a vn staff member by name
+    let query = QueryBuilder::<StaffQuery>::new()
+        .filters(&r#"["search", "=", "Yukari Tamura"]"#.to_string())
+        .fields(StaffFieldChoices::all())
         .enable_compact_filters()
         .enable_normalized_filters()
         .build();

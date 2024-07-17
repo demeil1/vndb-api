@@ -17,13 +17,20 @@ async fn main() {
     // Producer queries are similar to visual novel queries 
     // see examples/vn/main.rs for detailed documentation
     let query = QueryBuilder::<ProducerQuery>::new()
-        .filters(vec!["id".to_string(), "=".to_string(), "p1".to_string()])
+        .filters(&r#"["id", "=", "p1"]"#.to_string())
         .fields(ProducerFieldChoices::all())
-        .sort(SortField::Id)
-        .results(3)
-        .page(1)
-        .reverse()
-        .enable_count()
+        .enable_compact_filters()
+        .enable_normalized_filters()
+        .build();
+    if let Ok(response) = api_client.producer_search(&query).await {
+        println!("{:#?}", response);
+    }
+
+    // searching for the same producer that appeared in the query above
+    // but by name this time
+    let query = QueryBuilder::<ProducerQuery>::new()
+        .filters(&r#"["search", "=", "Yamikumo-Communications"]"#.to_string())
+        .fields(ProducerFieldChoices::all())
         .enable_compact_filters()
         .enable_normalized_filters()
         .build();

@@ -29,14 +29,8 @@ async fn main() {
         // see examples/vn/main.rs for more documentation
         // except UListQuery utilizes the .user() function  
         .user(&String::from("u2"))
-        .results(1)
-        .filters(vec!["id".to_string(), "=".to_string(), "v1".to_string()])
         .fields(UListFieldChoices::all())
-        .sort(SortField::Id)
-        .page(1)
-        .reverse()
-        .enable_compact_filters()
-        .enable_normalized_filters()
+        .results(1)
         .build();
     match api_client.ulist(&query).await {
         Ok(response) => println!("{:#?}", response),
@@ -68,7 +62,7 @@ async fn main() {
         .build();
     // If you don't know a visual novel id you can search for it (see examples/vn/main.rs)
     if let Ok(_) = api_client.ulist_patch(&String::from("v101"), &patch).await {
-        println!("Success: added v101");
+        println!("Success: patched v101");
     }
 
     // 4. remove a visual novel from the user’s list. 

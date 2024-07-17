@@ -2,20 +2,29 @@ use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
+use serde_json::Value;
 
+#[derive(Debug)]
 pub struct VnQuery {}
+#[derive(Debug)]
 pub struct ReleaseQuery {}
+#[derive(Debug)]
 pub struct ProducerQuery {}
+#[derive(Debug)]
 pub struct CharacterQuery {}
+#[derive(Debug)]
 pub struct StaffQuery {}
+#[derive(Debug)]
 pub struct TagQuery {}
+#[derive(Debug)]
 pub struct TraitQuery {}
+#[derive(Debug)]
 pub struct UListQuery {}
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Query<T> {
     /// Used to determine which database items to fetch
-    filters: Option<Vec<String>>,
+    filters: Option<Value>,
     /// List of fields to fetch for each database item
     fields: Option<String>,
     /// Field to sort on
@@ -41,7 +50,7 @@ pub struct Query<T> {
 
 #[derive(Debug)]
 pub struct QueryBuilder<T> {
-    pub filters: Option<Vec<String>>,
+    pub filters: Option<Value>,
     pub fields: Option<String>,
     pub sort: Option<SortField>,
     pub reverse: Option<bool>,
@@ -71,9 +80,16 @@ impl<T> QueryBuilder<T> {
         }
     }
 
-    pub fn filters(mut self, filters: Vec<String>) -> Self {
-        self.filters = Some(filters.clone());
-        self
+    pub fn filters(mut self, filters: &String) -> Self {
+        match serde_json::from_str(filters) {
+            Ok(filters) => {
+                self.filters = filters;
+                return self;
+            }
+            Err(error) => { 
+                panic!("Invalid json error: {}", error); 
+            }
+        }
     }
 
     pub fn reverse(mut self) -> Self {

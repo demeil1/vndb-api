@@ -17,13 +17,8 @@ async fn main() {
     // Release queries are similar to visual novel queries 
     // see examples/vn/main.rs for detailed documentation
     let query = QueryBuilder::<ReleaseQuery>::new()
-        .filters(vec!["id".to_string(), "=".to_string(), "r1".to_string()])
+        .filters(&r#"["id", "=", "r1"]"#.to_string())
         .fields(ReleaseFieldChoices::all())
-        .sort(SortField::Id)
-        .results(3)
-        .page(1)
-        .reverse()
-        .enable_count()
         .enable_compact_filters()
         .enable_normalized_filters()
         .build();

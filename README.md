@@ -12,7 +12,9 @@ async fn main() {
     let api_key = env::var("API_KEY").expect("API_KEY must be set");
     let api_client = VndbApiClient::new(&String::from(api_key));
 
-    // For more examples see the ["examples" directory](https://github.com/demeil1/vndb-api/tree/main/examples) in the github repo
+    // For more examples see the ["examples" directory]
+    //      (https://github.com/demeil1/vndb-api/tree/main/examples) 
+    // in the github repo
 
     // search for visual novel by name with autocomplete options
     let query = QueryBuilder::<VnQuery>::new()
@@ -35,20 +37,42 @@ async fn main() {
 
     // prints the name and rating for the top 3 visual novels on the site
     let query = QueryBuilder::<VnQuery>::new()
-        .fields(VnFieldChoices::all()))
-        .sort(SortField::Rating)
+        .filters(&r#"["search", "=", "DDLC"]"#.to_string())
+        .fields(VnFieldChoices::from(vec![VnField::Title]))
         .results(3)
-        .page(1)
-        .reverse()
         .build();
     match api_client.vn_search(&query).await {
         Ok(response) => {
             response.results.iter()
                 .for_each(|vn| {
-                    println!("{}: {}", vn.title.as_ref().unwrap(), vn.rating.unwrap());
+                    println!("{}", vn.title.as_ref().unwrap());
                 });
         }
-        Err(error) => eprintln!("{:#?}", error),
+        Err(error) => {
+            eprintln!("{:#?}", error);
+        }
+    }
+
+    // using complex filters
+    let filters = r#"
+        [ "and"
+            , [ "or"
+                , [ "olang", "!=", "en" ]
+                , [ "olang", "!=", "ja" ]
+            ]
+            , [ "released", ">=", "2020-01-01" ]
+        ]
+    "#.to_string();
+    let query = QueryBuilder::<VnQuery>::new()
+        .filters(&filters)
+        .results(10)
+        .page(1)
+        .build();
+    match api_client.vn_search(&query).await {
+        Ok(response) => {
+            println!("{:#?}", response);
+        }
+        Err(error) => { eprintln!("{:#?}", error); }
     }
 }
 ```
@@ -72,11 +96,7 @@ Obtaining an API Key:
 2. Open the "My Profile" tab and navigate to the "Applications" section
 3. Create a new token and use as instructed (see ["examples" directory](https://github.com/demeil1/vndb-api/tree/main/examples))
 
-# Current Limitations of This Crate
+# Reqursive Queries
 
-1. **Filters**: This section offers a variety of [ways to filter through searches](https://api.vndb.org/kana#filters) 
-ranging from a simple predicate consisting of a single array of strings to complex predicates with an array containing 
-both boolean logic and arrays. As of now, this crate only supports simple predicates; however, this is subject to 
-change in the future.
-2. **Fields**: This section allows you to select the pieces of information you want to pull from the site about a
-particular subject (Visual Novels, Producers, etc.). Unfortunately, due to the recursive nature of the [Visual Novel](https://api.vndb.org/kana#post-vn), [Release](https://api.vndb.org/kana#post-release), and [Character](https://api.vndb.org/kana#post-character) queries, recursive field choices have been limited. And, while the structs in this crate **DO** allow for said recursive field queries, recursive selection of fields is quite impractical and causes VNDB to deny providing a response due to the large size. These limitations only apply to the Visual Novel, Release, and Character queries. You **ARE** still be able to fill all struct fields with the aforementioned queries and recursive sections (such as related Visual Novels in a Visual Novel query) in the structure **WILL** still have their name and id such that they can be searched later on for extra information.
+**Fields**: This section allows you to select the pieces of information you want to pull from the site about a
+particular subject (Visual Novels, Producers, etc.). Unfortunately, due to the recursive nature of the [Visual Novel](https://api.vndb.org/kana#post-vn), [Release](https://api.vndb.org/kana#post-release), and [Character](https://api.vndb.org/kana#post-character) queries, recursive field choices have been limited. And, while the structs in this crate **DO** allow for said recursive field queries, recursive selection of fields is quite impractical and causes VNDB to deny providing a response due to the large size. These limitations only apply to the Visual Novel, Release, and Character queries. You **ARE** still be able to fill all struct fields with the aforementioned queries. Recursive sections (such as related Visual Novels in a Visual Novel query) in the structure **WILL** still have their name and id such that they can be searched later on for extra information.

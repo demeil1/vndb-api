@@ -17,13 +17,20 @@ async fn main() {
     // Trait queries are similar to visual novel queries 
     // see examples/vn/main.rs for detailed documentation
     let query = QueryBuilder::<TraitQuery>::new()
-        .filters(vec!["id".to_string(), "=".to_string(), "i5".to_string()])
+        .filters(&r#"["id", "=", "i5"]"#.to_string())
         .fields(TraitFieldChoices::all())
-        .sort(SortField::Id)
-        .results(3)
-        .page(1)
-        .reverse()
-        .enable_count()
+        .enable_compact_filters()
+        .enable_normalized_filters()
+        .build();
+    if let Ok(response) = api_client.trait_search(&query).await {
+        println!("{:#?}", response);
+    }
+
+    // this does the same as the query above except it searches by trait 
+    // name instead of id, the "blond" = trait id "i5" in the above query
+    let query = QueryBuilder::<TraitQuery>::new()
+        .filters(&r#"["search", "=", "blond"]"#.to_string())
+        .fields(TraitFieldChoices::all())
         .enable_compact_filters()
         .enable_normalized_filters()
         .build();
