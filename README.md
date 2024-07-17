@@ -36,20 +36,20 @@ async fn main() {
 
     // prints the name and rating for the top 3 visual novels on the site
     let query = QueryBuilder::<VnQuery>::new()
-        .filters(&r#"["search", "=", "DDLC"]"#.to_string())
-        .fields(VnFieldChoices::from(vec![VnField::Title]))
+        .fields(VnFieldChoices::all())
+        .sort(SortField::Rating)
         .results(3)
+        .page(1)
+        .reverse()
         .build();
     match api_client.vn_search(&query).await {
         Ok(response) => {
             response.results.iter()
                 .for_each(|vn| {
-                    println!("{}", vn.title.as_ref().unwrap());
+                    println!("{}: {}", vn.title.as_ref().unwrap(), vn.rating.unwrap());
                 });
         }
-        Err(error) => {
-            eprintln!("{:#?}", error);
-        }
+        Err(error) => eprintln!("{:#?}", error),
     }
 
     // using complex filters

@@ -81,7 +81,7 @@ async fn main() {
 
     // prints the name and rating for the top 3 visual novels on the site
     let query = QueryBuilder::<VnQuery>::new()
-        .fields(VnFieldChoices::from(vec![VnField::Title, VnField::Rating]))
+        .fields(VnFieldChoices::all())
         .sort(SortField::Rating)
         .results(3)
         .page(1)
